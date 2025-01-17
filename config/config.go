@@ -1,35 +1,49 @@
 package config
 
 import (
-	"log"
-	"os"
+    "log"
+    "os"
+    "strings" 
 
-	"github.com/joho/godotenv"
+    "github.com/joho/godotenv"
 )
 
-// Config holds the application configuration
 type Config struct {
-	BaseURL         string
-	JWTSecret       string
+    BaseURL           string
+    JWTSecret         string
+    Environment       string 
+    CORSAllowedOrigins []string  
+    Port              string 
 }
 
-// LoadConfig loads configuration from environment variables
 func LoadConfig() *Config {
-	// Load .env file in development
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using default values")
-	}
+    if err := godotenv.Load(); err != nil {
+        log.Println("No .env file found, using default values")
+    }
 
-	return &Config{
-		BaseURL:   getEnv("POCKET_BASE_URL", "http://127.0.0.1:8090/api"),
-		JWTSecret: getEnv("JWT_SECRET", "your_jwt_secret_key"),
-	}
+    return &Config{
+        BaseURL:         getEnv("POCKET_BASE_URL", "http://127.0.0.1:8090/api"),
+        JWTSecret:       getEnv("JWT_SECRET", "your_jwt_secret_key"),
+        Environment:     getEnv("APP_ENV", "development"), 
+        CORSAllowedOrigins: getEnvSlice("CORS_ALLOWED_ORIGINS", []string{"*"}), 
+        Port:            getEnv("PORT", "8080"), 
+    }
 }
 
-// getEnv retrieves the value of the environment variable or returns the default value
 func getEnv(key, defaultValue string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
-	}
-	return defaultValue
+    if value, exists := os.LookupEnv(key); exists {
+        return value
+    }
+    return defaultValue
+}
+
+func getEnvSlice(key string, defaultValue []string) []string {
+    if value, exists := os.LookupEnv(key); exists {
+        return splitCommaSeparated(value)
+    }
+    return defaultValue
+}
+
+func splitCommaSeparated(value string) []string {
+    return strings.Split(value, ",")
 }

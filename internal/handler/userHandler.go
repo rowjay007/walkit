@@ -1,4 +1,3 @@
-// handler/userHandler.go
 package handler
 
 import (
@@ -9,7 +8,6 @@ import (
     "github.com/rowjay007/walkit/pkg/util"
 )
 
-// GetMe retrieves the current user's profile
 func GetMe(c *gin.Context) {
     userID := c.GetString("userID")
     user, err := service.GetUser(userID)
@@ -20,7 +18,6 @@ func GetMe(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusOK, user)
 }
 
-// UpdateMe updates the current user's profile
 func UpdateMe(c *gin.Context) {
     userID := c.GetString("userID")
     var update model.UpdateUserRequest
