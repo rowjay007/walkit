@@ -7,18 +7,22 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/rowjay007/walkit/config"
 	"github.com/rowjay007/walkit/internal/model"
+	"github.com/rowjay007/walkit/config"
 )
 
-// RegisterUser handles user registration by sending a request to the user API.
+func UsersAPI() string {
+	cfg := config.LoadConfig() 
+	return cfg.BaseURL + "/collections/users/records"
+}
+
 func RegisterUser(user model.User) error {
 	userJSON, err := json.Marshal(user)
 	if err != nil {
 		return fmt.Errorf("error marshaling user data: %w", err)
 	}
 
-	resp, err := http.Post(config.UsersAPI, "application/json", bytes.NewBuffer(userJSON))
+	resp, err := http.Post(UsersAPI(), "application/json", bytes.NewBuffer(userJSON))
 	if err != nil {
 		return fmt.Errorf("error making request: %w", err)
 	}
@@ -32,9 +36,8 @@ func RegisterUser(user model.User) error {
 	return nil
 }
 
-// GetUser retrieves a user by ID.
 func GetUser(id string) (*model.User, error) {
-	resp, err := http.Get(fmt.Sprintf("%s/%s", config.UsersAPI, id))
+	resp, err := http.Get(fmt.Sprintf("%s/%s", UsersAPI(), id))
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %w", err)
 	}
@@ -53,14 +56,13 @@ func GetUser(id string) (*model.User, error) {
 	return &user, nil
 }
 
-// UpdateUser updates user information.
 func UpdateUser(id string, update model.UpdateUserRequest) error {
 	updateJSON, err := json.Marshal(update)
 	if err != nil {
 		return fmt.Errorf("error marshaling update data: %w", err)
 	}
 
-	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s", config.UsersAPI, id), bytes.NewBuffer(updateJSON))
+	req, err := http.NewRequest("PATCH", fmt.Sprintf("%s/%s", UsersAPI(), id), bytes.NewBuffer(updateJSON))
 	if err != nil {
 		return fmt.Errorf("error creating request: %w", err)
 	}
@@ -81,9 +83,8 @@ func UpdateUser(id string, update model.UpdateUserRequest) error {
 	return nil
 }
 
-// DeleteUser deletes a user by ID.
 func DeleteUser(id string) error {
-	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%s", config.UsersAPI, id), nil)
+	req, err := http.NewRequest("DELETE", fmt.Sprintf("%s/%s", UsersAPI(), id), nil)
 	if err != nil {
 		return fmt.Errorf("error creating request: %w", err)
 	}

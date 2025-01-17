@@ -7,18 +7,21 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"github.com/rowjay007/walkit/config"
 	"github.com/rowjay007/walkit/internal/model"
+	"github.com/rowjay007/walkit/config"
 )
 
-// LoginUser handles user login by sending a request to the authentication API.
+func AuthAPI() string {
+	return config.LoadConfig().BaseURL + "/collections/users/auth-with-password"
+}
+
 func LoginUser(login model.LoginRequest) (*model.LoginResponse, error) {
 	loginJSON, err := json.Marshal(login)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling login data: %w", err)
 	}
 
-	resp, err := http.Post(config.AuthAPI, "application/json", bytes.NewBuffer(loginJSON))
+	resp, err := http.Post(AuthAPI(), "application/json", bytes.NewBuffer(loginJSON))
 	if err != nil {
 		return nil, fmt.Errorf("error making request: %w", err)
 	}
@@ -37,7 +40,6 @@ func LoginUser(login model.LoginRequest) (*model.LoginResponse, error) {
 	return &loginResponse, nil
 }
 
-// RequestPasswordReset handles the password reset request.
 func RequestPasswordReset(email string) error {
 	resetRequest := model.PasswordResetRequest{Email: email}
 	resetJSON, err := json.Marshal(resetRequest)
@@ -45,7 +47,7 @@ func RequestPasswordReset(email string) error {
 		return fmt.Errorf("error marshaling reset request: %w", err)
 	}
 
-	resp, err := http.Post(config.ResetAPI, "application/json", bytes.NewBuffer(resetJSON))
+	resp, err := http.Post(config.LoadConfig().BaseURL+"/collections/users/request-password-reset", "application/json", bytes.NewBuffer(resetJSON))
 	if err != nil {
 		return fmt.Errorf("error making request: %w", err)
 	}
@@ -59,14 +61,13 @@ func RequestPasswordReset(email string) error {
 	return nil
 }
 
-// ConfirmPasswordReset handles the confirmation of a password reset.
 func ConfirmPasswordReset(request model.ConfirmPasswordResetRequest) error {
 	resetJSON, err := json.Marshal(request)
 	if err != nil {
 		return fmt.Errorf("error marshaling reset confirmation: %w", err)
 	}
 
-	resp, err := http.Post(config.ConfirmResetAPI, "application/json", bytes.NewBuffer(resetJSON))
+	resp, err := http.Post(config.LoadConfig().BaseURL+"/collections/users/confirm-password-reset", "application/json", bytes.NewBuffer(resetJSON))
 	if err != nil {
 		return fmt.Errorf("error making request: %w", err)
 	}
