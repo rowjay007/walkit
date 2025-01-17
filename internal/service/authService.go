@@ -1,20 +1,23 @@
+// service/authService.go
 package service
 
 import (
-	"github.com/rowjay007/walkit/internal/model"
-	"github.com/rowjay007/walkit/internal/repository"
+    "github.com/rowjay007/walkit/internal/model"
+    "github.com/rowjay007/walkit/internal/repository"
 )
 
 func LoginUser(login model.LoginRequest) (*model.LoginResponse, error) {
-	return repository.LoginUser(login)
+    return repository.LoginUser(login)
+}
+
+func RegisterUser(user model.User) error {
+    return repository.RegisterUser(user)
 }
 
 func RequestPasswordReset(email string) error {
-
-	return nil
+    return repository.RequestPasswordReset(email)
 }
 
 func ConfirmPasswordReset(request model.ConfirmPasswordResetRequest) error {
-	return nil
+    return repository.ConfirmPasswordReset(request)
 }
-

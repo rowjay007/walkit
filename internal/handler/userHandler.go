@@ -1,59 +1,105 @@
+// handler/userHandler.go
 package handler
 
 import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-	"github.com/rowjay007/walkit/internal/model"
-	"github.com/rowjay007/walkit/internal/service"
-	"github.com/rowjay007/walkit/pkg/util"
+    "net/http"
+    "github.com/gin-gonic/gin"
+    "github.com/rowjay007/walkit/internal/model"
+    "github.com/rowjay007/walkit/internal/service"
+    "github.com/rowjay007/walkit/pkg/util"
 )
 
-// LoginUser handles user login.
-func LoginUser(c *gin.Context) {
-	var login model.LoginRequest
-	if err := c.ShouldBindJSON(&login); err != nil {
-		util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	response, err := service.LoginUser(login)
-	if err != nil {
-		util.RespondWithError(c, http.StatusUnauthorized, err.Error())
-		return
-	}
-
-	util.RespondWithJSON(c, http.StatusOK, response)
+// GetMe retrieves the current user's profile
+func GetMe(c *gin.Context) {
+    userID := c.GetString("userID")
+    user, err := service.GetUser(userID)
+    if err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    util.RespondWithJSON(c, http.StatusOK, user)
 }
 
-// RequestPasswordReset handles password reset requests.
-func RequestPasswordReset(c *gin.Context) {
-	var request model.PasswordResetRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
+// UpdateMe updates the current user's profile
+func UpdateMe(c *gin.Context) {
+    userID := c.GetString("userID")
+    var update model.UpdateUserRequest
+    if err := c.ShouldBindJSON(&update); err != nil {
+        util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
+        return
+    }
 
-	if err := service.RequestPasswordReset(request.Email); err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
+    if err := service.UpdateUser(userID, update); err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
 
-	util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Password reset email sent"})
+    util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Profile updated successfully"})
 }
 
-// ConfirmPasswordReset handles password reset confirmation.
-func ConfirmPasswordReset(c *gin.Context) {
-	var request model.ConfirmPasswordResetRequest
-	if err := c.ShouldBindJSON(&request); err != nil {
-		util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
-		return
-	}
-
-	if err := service.ConfirmPasswordReset(request); err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
-		return
-	}
-
-	util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Password reset successfully"})
+// DeleteMe deletes the current user's account
+func DeleteMe(c *gin.Context) {
+    userID := c.GetString("userID")
+    if err := service.DeleteUser(userID); err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Account deleted successfully"})
 }
+
+// ListUsers retrieves a filtered and paginated list of users
+func ListUsers(c *gin.Context) {
+    var filter model.UserFilter
+    if err := c.ShouldBindQuery(&filter); err != nil {
+        util.RespondWithError(c, http.StatusBadRequest, "Invalid query parameters")
+        return
+    }
+
+    response, err := service.ListUsers(filter)
+    if err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+
+    util.RespondWithJSON(c, http.StatusOK, response)
+}
+
+// GetUser retrieves a specific user by ID
+func GetUser(c *gin.Context) {
+    id := c.Param("id")
+    user, err := service.GetUser(id)
+    if err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    util.RespondWithJSON(c, http.StatusOK, user)
+}
+
+// UpdateUser updates a specific user's information
+func UpdateUser(c *gin.Context) {
+    id := c.Param("id")
+    var update model.UpdateUserRequest
+    if err := c.ShouldBindJSON(&update); err != nil {
+        util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
+        return
+    }
+
+    if err := service.UpdateUser(id, update); err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+
+    util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "User updated successfully"})
+}
+
+// DeleteUser deletes a specific user
+func DeleteUser(c *gin.Context) {
+    id := c.Param("id")
+    if err := service.DeleteUser(id); err != nil {
+        util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+        return
+    }
+    util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "User deleted successfully"})
+}
+
+

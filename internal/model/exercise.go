@@ -9,3 +9,5 @@ type Exercise struct {
     CreatedAt   string   `json:"created"`
     UpdatedAt   string   `json:"updated"`
 }
+
+
