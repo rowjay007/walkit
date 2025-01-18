@@ -1,4 +1,3 @@
-// service/authService.go
 package service
 
 import (

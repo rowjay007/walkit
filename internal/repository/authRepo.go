@@ -1,4 +1,3 @@
-// repository/authRepo.go
 package repository
 
 import (
