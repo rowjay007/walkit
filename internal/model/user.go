@@ -34,8 +34,8 @@ type UserListResponse struct {
 }
 
 type LoginRequest struct {
-    Identity string `json:"identity" binding:"required"`
-    Password string `json:"password" binding:"required"`
+    Identity string `json:"identity" binding:"required,min=3,max=100"`
+    Password string `json:"password" binding:"required,min=8,max=100"`
 }
 
 type LoginResponse struct {

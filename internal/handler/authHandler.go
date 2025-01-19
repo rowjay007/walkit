@@ -1,31 +1,60 @@
 package handler
 
 import (
-    "net/http"
-    "github.com/gin-gonic/gin"
-    "github.com/rowjay007/walkit/internal/model"
-    "github.com/rowjay007/walkit/internal/service"
-    "github.com/rowjay007/walkit/pkg/util"
+	"fmt"
+	"net/http"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/rowjay007/walkit/internal/model"
+	"github.com/rowjay007/walkit/internal/service"
+	"github.com/rowjay007/walkit/pkg/util"
 )
 
-// LoginUser handles user login requests
 func LoginUser(c *gin.Context) {
     var login model.LoginRequest
     if err := c.ShouldBindJSON(&login); err != nil {
-        util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
+        util.RespondWithError(c, http.StatusBadRequest, fmt.Sprintf("Invalid request payload: %v", err))
+        return
+    }
+
+    if err := validateLoginInput(login); err != nil {
+        util.RespondWithError(c, http.StatusBadRequest, err.Error())
         return
     }
 
     response, err := service.LoginUser(login)
     if err != nil {
-        util.RespondWithError(c, http.StatusUnauthorized, err.Error())
+
+        
+        statusCode := determineStatusCode(err)
+        util.RespondWithError(c, statusCode, "Login failed. Please check your credentials.")
         return
     }
 
     util.RespondWithJSON(c, http.StatusOK, response)
 }
 
-// RegisterUser handles new user registration
+func validateLoginInput(login model.LoginRequest) error {
+    if strings.TrimSpace(login.Identity) == "" {
+        return fmt.Errorf("identity cannot be empty")
+    }
+    if len(login.Password) < 8 {
+        return fmt.Errorf("password must be at least 8 characters")
+    }
+    return nil
+}
+
+func determineStatusCode(err error) int {
+    if strings.Contains(strings.ToLower(err.Error()), "invalid credentials") {
+        return http.StatusUnauthorized
+    }
+    if strings.Contains(strings.ToLower(err.Error()), "not found") {
+        return http.StatusNotFound
+    }
+    return http.StatusInternalServerError
+}
+
 func RegisterUser(c *gin.Context) {
     var user model.User
     if err := c.ShouldBindJSON(&user); err != nil {
@@ -41,7 +70,6 @@ func RegisterUser(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusCreated, gin.H{"message": "User registered successfully"})
 }
 
-// RequestPasswordReset initiates the password reset process
 func RequestPasswordReset(c *gin.Context) {
     var request model.PasswordResetRequest
     if err := c.ShouldBindJSON(&request); err != nil {
@@ -57,7 +85,6 @@ func RequestPasswordReset(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Password reset email sent"})
 }
 
-// ConfirmPasswordReset handles the password reset confirmation
 func ConfirmPasswordReset(c *gin.Context) {
     var request model.ConfirmPasswordResetRequest
     if err := c.ShouldBindJSON(&request); err != nil {

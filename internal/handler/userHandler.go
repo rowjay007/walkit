@@ -44,7 +44,6 @@ func DeleteMe(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Account deleted successfully"})
 }
 
-// ListUsers retrieves a filtered and paginated list of users
 func ListUsers(c *gin.Context) {
     var filter model.UserFilter
     if err := c.ShouldBindQuery(&filter); err != nil {
@@ -61,7 +60,6 @@ func ListUsers(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusOK, response)
 }
 
-// GetUser retrieves a specific user by ID
 func GetUser(c *gin.Context) {
     id := c.Param("id")
     user, err := service.GetUser(id)
@@ -72,7 +70,6 @@ func GetUser(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusOK, user)
 }
 
-// UpdateUser updates a specific user's information
 func UpdateUser(c *gin.Context) {
     id := c.Param("id")
     var update model.UpdateUserRequest

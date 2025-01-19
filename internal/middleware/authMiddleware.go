@@ -10,7 +10,6 @@ import (
 	"github.com/rowjay007/walkit/config"
 )
 
-// JWTAuthMiddleware is a middleware function that checks for a valid JWT token.
 func JWTAuthMiddleware(c *gin.Context) {
 	tokenString := c.GetHeader("Authorization")
 	if tokenString == "" {
@@ -35,6 +34,5 @@ func JWTAuthMiddleware(c *gin.Context) {
 		return
 	}
 
-	// Token is valid
 	c.Next()
 }
