@@ -33,5 +33,16 @@ func LoadRoutes(router *gin.Engine) {
             users.PATCH("/:id", handler.UpdateUser)
             users.DELETE("/:id", handler.DeleteUser)
         }
+
+       exercises := api.Group("/exercises")
+    
+     {
+            exercises.POST("", handler.CreateExercise)
+            exercises.GET("", handler.ListExercises)
+            exercises.GET("/:id", handler.GetExercise)
+            exercises.PATCH("/:id", handler.UpdateExercise)
+            exercises.DELETE("/:id", handler.DeleteExercise)
+        }
+    
     }
 }
