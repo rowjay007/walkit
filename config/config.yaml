@@ -1,0 +1,6 @@
+pocket_base_url: "http://127.0.0.1:8090/api"
+jwt_secret: "your_jwt_secret_key"
+app_env: "development"
+cors_allowed_origins:
+  - "*"
+port: "8080"

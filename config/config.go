@@ -2,48 +2,41 @@ package config
 
 import (
     "log"
-    "os"
-    "strings" 
 
-    "github.com/joho/godotenv"
+    "github.com/spf13/viper"
 )
 
 type Config struct {
     BaseURL           string
     JWTSecret         string
-    Environment       string 
-    CORSAllowedOrigins []string  
-    Port              string 
+    Environment       string
+    CORSAllowedOrigins []string
+    Port              string
 }
 
 func LoadConfig() *Config {
-    if err := godotenv.Load(); err != nil {
-        log.Println("No .env file found, using default values")
+    viper.SetConfigName("config")
+    viper.SetConfigType("yaml")
+    viper.AddConfigPath("./config")
+    viper.AddConfigPath(".")
+    viper.AutomaticEnv()
+    viper.SetDefault("cors_allowed_origins", []string{"*"}) 
+
+    if err := viper.ReadInConfig(); err != nil {
+        log.Printf("Error reading config file, using defaults: %v", err)
+    }
+
+    corsAllowedOrigins := viper.GetStringSlice("cors_allowed_origins")
+    if len(corsAllowedOrigins) == 0 {
+        corsAllowedOrigins = []string{"*"} 
     }
 
     return &Config{
-        BaseURL:         getEnv("POCKET_BASE_URL", "http://127.0.0.1:8090/api"),
-        JWTSecret:       getEnv("JWT_SECRET", "your_jwt_secret_key"),
-        Environment:     getEnv("APP_ENV", "development"), 
-        CORSAllowedOrigins: getEnvSlice("CORS_ALLOWED_ORIGINS", []string{"*"}), 
-        Port:            getEnv("PORT", "8080"), 
+        BaseURL:           viper.GetString("pocket_base_url"),
+        JWTSecret:         viper.GetString("jwt_secret"),
+        Environment:       viper.GetString("app_env"),
+        CORSAllowedOrigins: corsAllowedOrigins,
+        Port:              viper.GetString("port"),
     }
 }
 
-func getEnv(key, defaultValue string) string {
-    if value, exists := os.LookupEnv(key); exists {
-        return value
-    }
-    return defaultValue
-}
-
-func getEnvSlice(key string, defaultValue []string) []string {
-    if value, exists := os.LookupEnv(key); exists {
-        return splitCommaSeparated(value)
-    }
-    return defaultValue
-}
-
-func splitCommaSeparated(value string) []string {
-    return strings.Split(value, ",")
-}
