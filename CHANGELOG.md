@@ -1,3 +1,10 @@
+# [0.5.0](https://github.com/rowjay007/walkit/compare/v0.4.0...v0.5.0) (2025-01-22)
+
+
+### Features
+
+* enhance workflow logging and triggers ([ce138e7](https://github.com/rowjay007/walkit/commit/ce138e7dce81721d41a012a592715ee51c7c1217))
+
 # [0.4.0](https://github.com/rowjay007/walkit/compare/v0.3.0...v0.4.0) (2025-01-22)
 
 
