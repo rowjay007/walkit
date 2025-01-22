@@ -1,8 +1,7 @@
 name: Deploy
 
 on:
-  release:
-    types: [published, created, released]
+  workflow_call:
   workflow_dispatch:
 
 jobs:
@@ -10,6 +9,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
@@ -23,11 +24,7 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          if [[ ${{ github.event_name }} == 'release' ]]; then
-            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION=dev-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
-          fi
+          echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
 
       - name: Build and push
         uses: docker/build-push-action@v4
