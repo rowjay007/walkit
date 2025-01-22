@@ -1,8 +1,13 @@
 name: Deploy
 
 on:
-  workflow_call:
+  release:
+    types: [published]
   workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   deploy:
@@ -24,7 +29,8 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          echo "VERSION=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
+          VERSION=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and push
         uses: docker/build-push-action@v4

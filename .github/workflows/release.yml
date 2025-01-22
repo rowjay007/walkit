@@ -10,14 +10,10 @@ permissions:
   issues: write
   pull-requests: write
   packages: write
-  actions: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    outputs:
-      released: ${{ steps.release.outputs.released }}
-      version: ${{ steps.release.outputs.version }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -33,19 +29,10 @@ jobs:
         run: npm install -g semantic-release @semantic-release/git @semantic-release/changelog @semantic-release/github
 
       - name: Create Release
-        id: release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           echo "Starting release process..."
-          if npx semantic-release --debug; then
-            echo "released=true" >> $GITHUB_OUTPUT
-            echo "version=$(git describe --tags --abbrev=0)" >> $GITHUB_OUTPUT
-          else
-            echo "released=false" >> $GITHUB_OUTPUT
-          fi
-
-  deploy:
-    needs: release
-    if: needs.release.outputs.released == 'true'
-    uses: ./.github/workflows/deploy.yml
+          npx semantic-release --debug
+          echo "Release process completed"
