@@ -1,3 +1,10 @@
+# [0.4.0](https://github.com/rowjay007/walkit/compare/v0.3.0...v0.4.0) (2025-01-22)
+
+
+### Features
+
+* complete CI/CD setup with Docker deployment ([0fd003d](https://github.com/rowjay007/walkit/commit/0fd003d03e5a85931b13aa2ac488aaab7142d22d))
+
 # [0.3.0](https://github.com/rowjay007/walkit/compare/v0.2.0...v0.3.0) (2025-01-22)
 
 
