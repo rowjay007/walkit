@@ -2,7 +2,8 @@ name: Deploy
 
 on:
   release:
-    types: [created]
+    types: [created, published]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -21,7 +22,10 @@ jobs:
 
       - name: Extract version
         id: version
-        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        run: |
+          echo "Triggering event: ${{ github.event_name }}"
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          echo "Using version: ${{ steps.version.outputs.VERSION }}"
 
       - name: Build and push
         uses: docker/build-push-action@v4

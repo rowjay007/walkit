@@ -24,4 +24,7 @@ jobs:
       - name: Create Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          echo "Creating release..."
+          npx semantic-release
+          echo "Release process completed"
