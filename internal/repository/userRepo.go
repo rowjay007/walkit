@@ -4,7 +4,7 @@ import (
     "bytes"
     "encoding/json"
     "fmt"
-    "io/ioutil"
+    "io"
     "net/http"
     "net/url"
     "github.com/rowjay007/walkit/internal/model"
@@ -23,7 +23,7 @@ func GetUser(id string) (*model.User, error) {
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        body, _ := ioutil.ReadAll(resp.Body)
+        body, _ := io.ReadAll(resp.Body)
         return nil, fmt.Errorf("failed to get user: %s", string(body))
     }
 
@@ -101,7 +101,7 @@ func UpdateUser(id string, update model.UpdateUserRequest) error {
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        body, _ := ioutil.ReadAll(resp.Body)
+        body, _ := io.ReadAll(resp.Body)
         return fmt.Errorf("failed to update user: %s", string(body))
     }
 
@@ -122,7 +122,7 @@ func DeleteUser(id string) error {
 		defer resp.Body.Close()
 
 		if resp.StatusCode != http.StatusOK {
-			body, _ := ioutil.ReadAll(resp.Body)
+			body, _ := io.ReadAll(resp.Body)
 			return fmt.Errorf("failed to delete user: %s", string(body))
 		}
 

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"time"
 
@@ -30,12 +30,13 @@ func RegisterUser(user model.User) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("registration failed: %s", string(body))
 	}
 
 	return nil
 }
+
 func LoginUser(login model.LoginRequest) (*model.LoginResponse, error) {
     if login.Identity == "" || login.Password == "" {
         return nil, fmt.Errorf("identity and password are required")
@@ -65,7 +66,7 @@ func LoginUser(login model.LoginRequest) (*model.LoginResponse, error) {
     }
     defer resp.Body.Close()
 
-    body, err := ioutil.ReadAll(resp.Body)
+    body, err := io.ReadAll(resp.Body)
     if err != nil {
         return nil, fmt.Errorf("error reading response body: %w", err)
     }
@@ -126,7 +127,7 @@ func RequestPasswordReset(email string) error {
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        body, _ := ioutil.ReadAll(resp.Body)
+        body, _ := io.ReadAll(resp.Body)
         return fmt.Errorf("password reset request failed: %s", string(body))
     }
 
@@ -146,7 +147,7 @@ func ConfirmPasswordReset(request model.ConfirmPasswordResetRequest) error {
     defer resp.Body.Close()
 
     if resp.StatusCode != http.StatusOK {
-        body, _ := ioutil.ReadAll(resp.Body)
+        body, _ := io.ReadAll(resp.Body)
         return fmt.Errorf("password reset confirmation failed: %s", string(body))
     }
 

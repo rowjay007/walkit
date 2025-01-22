@@ -4,10 +4,11 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
-	"github.com/rowjay007/walkit/internal/model"
+
 	"github.com/rowjay007/walkit/config"
+	"github.com/rowjay007/walkit/internal/model"
 )
 
 func WorkoutAPI() string {
@@ -27,7 +28,7 @@ func CreateWorkout(workout model.WorkoutPlan) (*model.WorkoutPlan, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusCreated {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return nil, fmt.Errorf("failed to create workout: %s", string(body))
 	}
 
@@ -46,7 +47,7 @@ func GetWorkout(id string) (*model.WorkoutPlan, error) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return nil, fmt.Errorf("failed to get workout: %s", string(body))
 	}
 
@@ -78,7 +79,7 @@ func UpdateWorkout(id string, update model.WorkoutPlan) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("failed to update workout: %s", string(body))
 	}
 
@@ -99,7 +100,7 @@ func DeleteWorkout(id string) error {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		body, _ := ioutil.ReadAll(resp.Body)
+		body, _ := io.ReadAll(resp.Body)
 		return fmt.Errorf("failed to delete workout: %s", string(body))
 	}
 
