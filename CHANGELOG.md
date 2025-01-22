@@ -1,3 +1,10 @@
+# [0.9.0](https://github.com/rowjay007/walkit/compare/v0.8.0...v0.9.0) (2025-01-22)
+
+
+### Features
+
+* chain workflows for automatic deployment ([7ac0f6b](https://github.com/rowjay007/walkit/commit/7ac0f6bebe3396db493c1f2112a2f6424c1a3925))
+
 # [0.8.0](https://github.com/rowjay007/walkit/compare/v0.7.0...v0.8.0) (2025-01-22)
 
 
