@@ -1,3 +1,10 @@
+# [0.11.0](https://github.com/rowjay007/walkit/compare/v0.10.0...v0.11.0) (2025-01-22)
+
+
+### Features
+
+* add version logging for better visibility ([24b6321](https://github.com/rowjay007/walkit/commit/24b6321cbef89a66f42e58bd4586bd344985f617))
+
 # [0.10.0](https://github.com/rowjay007/walkit/compare/v0.9.0...v0.10.0) (2025-01-22)
 
 
