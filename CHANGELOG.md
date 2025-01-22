@@ -1,3 +1,10 @@
+# [0.6.0](https://github.com/rowjay007/walkit/compare/v0.5.0...v0.6.0) (2025-01-22)
+
+
+### Features
+
+* update workflow configurations ([639b9d0](https://github.com/rowjay007/walkit/commit/639b9d02f202735831231db5217040b66e46a5c9))
+
 # [0.5.0](https://github.com/rowjay007/walkit/compare/v0.4.0...v0.5.0) (2025-01-22)
 
 
