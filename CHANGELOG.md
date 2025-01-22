@@ -1,3 +1,10 @@
+# [0.7.0](https://github.com/rowjay007/walkit/compare/v0.6.0...v0.7.0) (2025-01-22)
+
+
+### Features
+
+* update workflow triggers and permissions ([c1f5924](https://github.com/rowjay007/walkit/commit/c1f5924f2b137a1bfb1759e3215e2d5231a27360))
+
 # [0.6.0](https://github.com/rowjay007/walkit/compare/v0.5.0...v0.6.0) (2025-01-22)
 
 
