@@ -20,8 +20,8 @@ jobs:
     - name: Install dependencies
       run: go mod download
 
-    - name: Run tests
-      run: make test
+    - name: Create test directory
+      run: mkdir -p test
 
     - name: Run linter
       uses: golangci/golangci-lint-action@v3

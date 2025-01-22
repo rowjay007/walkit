@@ -4,6 +4,11 @@ on:
   release:
     types: [published]
   workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to deploy (leave empty for latest tag)'
+        required: false
+        default: ''
 
 permissions:
   contents: read
@@ -29,7 +34,14 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          VERSION=$(git describe --tags --abbrev=0 || echo "0.0.0")
+          if [[ "${{ github.event_name }}" == "release" ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ -n "${{ inputs.version }}" ]]; then
+            VERSION=${{ inputs.version }}
+          else
+            VERSION=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+          fi
+          echo "Using version: $VERSION"
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Build and push
