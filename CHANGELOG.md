@@ -1,3 +1,10 @@
+# [0.8.0](https://github.com/rowjay007/walkit/compare/v0.7.0...v0.8.0) (2025-01-22)
+
+
+### Features
+
+* modify air.toml ([b0ee3b6](https://github.com/rowjay007/walkit/commit/b0ee3b61033df118820fe14c7531c2d126ee4469))
+
 # [0.7.0](https://github.com/rowjay007/walkit/compare/v0.6.0...v0.7.0) (2025-01-22)
 
 
