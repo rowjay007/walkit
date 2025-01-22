@@ -1,3 +1,10 @@
+# [0.10.0](https://github.com/rowjay007/walkit/compare/v0.9.0...v0.10.0) (2025-01-22)
+
+
+### Features
+
+* add publish ([21c13c7](https://github.com/rowjay007/walkit/commit/21c13c72ec14fb30474ae5a89042939f75513b11))
+
 # [0.9.0](https://github.com/rowjay007/walkit/compare/v0.8.0...v0.9.0) (2025-01-22)
 
 
