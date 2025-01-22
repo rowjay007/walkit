@@ -23,9 +23,11 @@ jobs:
       - name: Extract version
         id: version
         run: |
-          echo "Triggering event: ${{ github.event_name }}"
-          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
-          echo "Using version: ${{ steps.version.outputs.VERSION }}"
+          if [[ ${{ github.event_name }} == 'release' ]]; then
+            echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+          else
+            echo "VERSION=dev-${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          fi
 
       - name: Build and push
         uses: docker/build-push-action@v4
