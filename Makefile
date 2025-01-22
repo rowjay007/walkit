@@ -8,37 +8,37 @@ all: build
 
 # Build the application
 build:
-    go build -o bin/$(BINARY_NAME) ./cmd/server/ 
+	go build -o bin/$(BINARY_NAME) ./cmd/server/
 
 # Run the application
 run:
-    ./bin/$(BINARY_NAME) 
+	./bin/$(BINARY_NAME)
 
 # Start development with live reloading
 dev:
-    air -c air.toml
+	air -c air.toml
 
 # Run tests
 test:
-    go test -v ./...
+	go test -v ./...
 
 # Clean build artifacts
 clean:
-    go clean
-    rm -rf bin/
+	go clean
+	rm -rf bin/
 
 # Build Docker image
 docker-build:
-    docker build -t $(DOCKER_IMAGE) .
+	docker build -t $(DOCKER_IMAGE) .
 
 # Run Docker container
 docker-run:
-    docker run -p 8080:8080 $(DOCKER_IMAGE)
+	docker run -p 8080:8080 $(DOCKER_IMAGE)
 
 # Run linter
 lint:
-    golangci-lint run
+	golangci-lint run
 
 # Generate Swagger documentation
 generate-swagger:
-    swag init -g cmd/server/main.go
+	swag init -g cmd/server/main.go
