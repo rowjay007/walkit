@@ -112,12 +112,6 @@ func LoginUser(login model.LoginRequest) (*model.LoginResponse, error) {
     return loginResponse, nil
 }
 
-
-
-
-
-
-
 func RequestPasswordReset(email string) error {
     resetRequest := model.PasswordResetRequest{Email: email}
     resetJSON, err := json.Marshal(resetRequest)

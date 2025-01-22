@@ -7,13 +7,13 @@ type Exercise struct {
     Description string   `json:"description"`
     Category    string   `json:"category"`
     MuscleGroup []string `json:"muscleGroup,omitempty"`
-    Duration    int      `json:"duration"`  // Duration in seconds
-    Intensity   string   `json:"intensity"` // Intensity (e.g., Low, Medium, High)
+    Duration    int      `json:"duration"`  
+    Intensity   string   `json:"intensity"`
     CreatedAt   string   `json:"created"`
     UpdatedAt   string   `json:"updated"`
 }
 
-// ExerciseFilter struct to handle filter parameters for listing exercises.
+
 type ExerciseFilter struct {
     Name        string `form:"name"`
     Category    string `form:"category"`
@@ -24,7 +24,7 @@ type ExerciseFilter struct {
     PerPage     int    `form:"perPage"`
 }
 
-// ExerciseListResponse struct to hold the response data for listing exercises.
+
 type ExerciseListResponse struct {
     Items      []Exercise `json:"items"`
     TotalItems int        `json:"totalItems"`

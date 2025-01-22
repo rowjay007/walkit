@@ -25,7 +25,6 @@ func CreateExercise(c *gin.Context) {
 	util.RespondWithJSON(c, http.StatusCreated, gin.H{"message": "Exercise created successfully"})
 }
 
-// GetExercise handler to get a single exercise by ID.
 func GetExercise(c *gin.Context) {
 	id := c.Param("id")
 	exercise, err := service.GetExercise(id)
@@ -36,7 +35,6 @@ func GetExercise(c *gin.Context) {
 	util.RespondWithJSON(c, http.StatusOK, exercise)
 }
 
-// ListExercises handler to list exercises with optional filters.
 func ListExercises(c *gin.Context) {
 	var filter model.ExerciseFilter
 	if err := c.ShouldBindQuery(&filter); err != nil {
@@ -53,7 +51,6 @@ func ListExercises(c *gin.Context) {
 	util.RespondWithJSON(c, http.StatusOK, response)
 }
 
-// UpdateExercise handler to update an exercise by ID.
 func UpdateExercise(c *gin.Context) {
 	id := c.Param("id")
 	var exercise model.Exercise
@@ -70,7 +67,6 @@ func UpdateExercise(c *gin.Context) {
 	util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Exercise updated successfully"})
 }
 
-// DeleteExercise handler to delete an exercise by ID.
 func DeleteExercise(c *gin.Context) {
 	id := c.Param("id")
 	if err := service.DeleteExercise(id); err != nil {

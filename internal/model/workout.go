@@ -17,13 +17,13 @@ type ExerciseSet struct {
     Sets       int     `json:"sets"`
     Reps       int     `json:"reps"`
     Weight     float64 `json:"weight"`
-    Duration   int     `json:"duration"` // in seconds, for cardio exercises
+    Duration   int     `json:"duration"` 
     Notes      string  `json:"notes"`
 }
 
 type WorkoutSchedule struct {
     StartDate string   `json:"startDate"`
     EndDate   string   `json:"endDate"`
-    Days      []string `json:"days"` // e.g., ["Monday", "Wednesday", "Friday"]
-    Time      string   `json:"time"` // e.g., "18:00"
+    Days      []string `json:"days"` 
+    Time      string   `json:"time"`
 }

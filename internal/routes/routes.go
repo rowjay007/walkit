@@ -7,42 +7,49 @@ import (
 )
 
 func LoadRoutes(router *gin.Engine) {
-    api := router.Group("/api/v1")
-    {
-        // Public auth routes
-        auth := api.Group("/auth")
-        {
-            auth.POST("/register", handler.RegisterUser)
-            auth.POST("/login", handler.LoginUser)
-            auth.POST("/forgot-password", handler.RequestPasswordReset)
-            auth.POST("/reset-password", handler.ConfirmPasswordReset)
-        }
+	api := router.Group("/api/v1")
+	{
+		auth := api.Group("/auth")
+		{
+			auth.POST("/register", handler.RegisterUser)
+			auth.POST("/login", handler.LoginUser)
+			auth.POST("/forgot-password", handler.RequestPasswordReset)
+			auth.POST("/reset-password", handler.ConfirmPasswordReset)
+		}
 
-        // Protected user routes
-        users := api.Group("/users")
-        users.Use(middleware.JWTAuthMiddleware)
-        {
-            // Profile management
-            users.GET("/me", handler.GetMe)
-            users.PATCH("/me", handler.UpdateMe)
-            users.DELETE("/me", handler.DeleteMe)
+		users := api.Group("/users")
+		users.Use(middleware.JWTAuthMiddleware)
+		{
+			users.GET("/me", handler.GetMe)
+			users.PATCH("/me", handler.UpdateMe)
+			users.DELETE("/me", handler.DeleteMe)
 
-            // User management (admin only)
-            users.GET("", handler.ListUsers)
-            users.GET("/:id", handler.GetUser)
-            users.PATCH("/:id", handler.UpdateUser)
-            users.DELETE("/:id", handler.DeleteUser)
-        }
+			users.GET("", handler.ListUsers)
+			users.GET("/:id", handler.GetUser)
+			users.PATCH("/:id", handler.UpdateUser)
+			users.DELETE("/:id", handler.DeleteUser)
+		}
 
-       exercises := api.Group("/exercises")
-    
-     {
-            exercises.POST("", handler.CreateExercise)
-            exercises.GET("", handler.ListExercises)
-            exercises.GET("/:id", handler.GetExercise)
-            exercises.PATCH("/:id", handler.UpdateExercise)
-            exercises.DELETE("/:id", handler.DeleteExercise)
-        }
-    
-    }
+		exercises := api.Group("/exercises")
+		exercises.Use(middleware.JWTAuthMiddleware)
+
+		{
+			exercises.POST("", handler.CreateExercise)
+			exercises.GET("", handler.ListExercises)
+			exercises.GET("/:id", handler.GetExercise)
+			exercises.PATCH("/:id", handler.UpdateExercise)
+			exercises.DELETE("/:id", handler.DeleteExercise)
+		}
+
+		workouts := api.Group("/workouts")
+		workouts.Use(middleware.JWTAuthMiddleware)
+
+		{
+			workouts.POST("", handler.CreateWorkout)
+			workouts.GET("/:id", handler.GetWorkout)
+			workouts.PATCH("/:id", handler.UpdateWorkout)
+			workouts.DELETE("/:id", handler.DeleteWorkout)
+		}
+
+	}
 }

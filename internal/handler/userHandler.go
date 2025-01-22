@@ -86,7 +86,6 @@ func UpdateUser(c *gin.Context) {
     util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "User updated successfully"})
 }
 
-// DeleteUser deletes a specific user
 func DeleteUser(c *gin.Context) {
     id := c.Param("id")
     if err := service.DeleteUser(id); err != nil {

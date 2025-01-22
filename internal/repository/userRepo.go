@@ -38,7 +38,6 @@ func GetUser(id string) (*model.User, error) {
 func ListUsers(filter model.UserFilter) (*model.UserListResponse, error) {
     query := url.Values{}
     
-    // Build filter conditions
     if filter.Username != "" {
         query.Add("filter", fmt.Sprintf("username~'%s'", filter.Username))
     }
@@ -52,7 +51,6 @@ func ListUsers(filter model.UserFilter) (*model.UserListResponse, error) {
         query.Add("filter", fmt.Sprintf("activityLevel='%s'", filter.ActivityLevel))
     }
 
-    // Add sorting
     if filter.SortBy != "" {
         sortPrefix := "+"
         if filter.SortOrder == "desc" {
@@ -61,7 +59,6 @@ func ListUsers(filter model.UserFilter) (*model.UserListResponse, error) {
         query.Add("sort", fmt.Sprintf("%s%s", sortPrefix, filter.SortBy))
     }
 
-    // Add pagination
     if filter.Page > 0 {
         query.Add("page", fmt.Sprintf("%d", filter.Page))
     }
@@ -69,7 +66,6 @@ func ListUsers(filter model.UserFilter) (*model.UserListResponse, error) {
         query.Add("perPage", fmt.Sprintf("%d", filter.PerPage))
     }
 
-    // Make request
     url := fmt.Sprintf("%s?%s", UsersAPI(), query.Encode())
     resp, err := http.Get(url)
     if err != nil {

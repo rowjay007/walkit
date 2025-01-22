@@ -20,7 +20,7 @@ type UserFilter struct {
     FitnessGoal   string `form:"fitnessGoal"`
     ActivityLevel string `form:"activityLevel"`
     SortBy        string `form:"sortBy"`
-    SortOrder     string `form:"sortOrder"` // asc or desc
+    SortOrder     string `form:"sortOrder"` 
     Page          int    `form:"page"`
     PerPage       int    `form:"perPage"`
 }
