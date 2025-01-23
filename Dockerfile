@@ -1,11 +1,11 @@
 
 # Build stage
-FROM golang:1.21-alpine AS builder
+FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache git make
+RUN apk add --no-cache gcc musl-dev
 
 # Copy go mod files
 COPY go.mod go.sum ./
@@ -15,27 +15,18 @@ RUN go mod download
 COPY . .
 
 # Build the application
-RUN make build
+RUN CGO_ENABLED=0 GOOS=linux go build -o main ./cmd/server/main.go
 
 # Final stage
-FROM alpine:3.18
+FROM alpine:latest
 
 WORKDIR /app
 
-# Add necessary runtime dependencies
-RUN apk add --no-cache ca-certificates tzdata
-
-# Copy binary and config
-COPY --from=builder /app/bin/walkit .
-COPY --from=builder /app/config ./config
-
-# Set environment variables
-ENV GIN_MODE=release
-ENV APP_ENV=production
-ENV POCKET_BASE_URL=http://pocketbase:8090/api
+# Copy the binary from builder
+COPY --from=builder /app/main .
 
 # Expose port
 EXPOSE 8080
 
 # Run the application
-CMD ["./walkit"]
+CMD ["./main"]
