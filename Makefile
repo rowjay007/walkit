@@ -35,4 +35,5 @@ lint:
 	golangci-lint run
 
 generate-swagger:
-	swag init -g cmd/server/main.go
+	swag fmt  # Format swagger comments
+	swag init --parseDependency --parseInternal -g cmd/server/main.go -o docs
