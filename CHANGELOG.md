@@ -1,3 +1,10 @@
+## [0.12.1](https://github.com/rowjay007/walkit/compare/v0.12.0...v0.12.1) (2025-01-23)
+
+
+### Bug Fixes
+
+* remove swagger from handler ([51d4621](https://github.com/rowjay007/walkit/commit/51d462120d37d99255c9d5c7cc18dd643e4e1ada))
+
 # [0.12.0](https://github.com/rowjay007/walkit/compare/v0.11.0...v0.12.0) (2025-01-23)
 
 
