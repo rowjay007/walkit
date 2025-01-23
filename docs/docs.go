@@ -26,7 +26,7 @@ const docTemplate = `{
     "paths": {
         "/auth/login": {
             "post": {
-                "description": "Authenticate user and return JWT token",
+                "description": "Authenticate user and get JWT token",
                 "consumes": [
                     "application/json"
                 ],
@@ -40,7 +40,7 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "description": "Login credentials",
-                        "name": "login",
+                        "name": "credentials",
                         "in": "body",
                         "required": true,
                         "schema": {
@@ -84,7 +84,7 @@ const docTemplate = `{
         },
         "/auth/password-reset": {
             "post": {
-                "description": "Send a password reset email to the user",
+                "description": "Send password reset email to user",
                 "consumes": [
                     "application/json"
                 ],
@@ -119,8 +119,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -130,7 +130,7 @@ const docTemplate = `{
         },
         "/auth/password-reset/confirm": {
             "post": {
-                "description": "Reset user's password using the reset token",
+                "description": "Reset password using token",
                 "consumes": [
                     "application/json"
                 ],
@@ -165,8 +165,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -176,7 +176,7 @@ const docTemplate = `{
         },
         "/auth/register": {
             "post": {
-                "description": "Create a new user account",
+                "description": "Register a new user account",
                 "consumes": [
                     "application/json"
                 ],
@@ -202,7 +202,19 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.User"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     },
                     "400": {
@@ -250,12 +262,6 @@ const docTemplate = `{
                         "description": "Items per page",
                         "name": "limit",
                         "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Exercise type",
-                        "name": "type",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -286,8 +292,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -408,14 +414,14 @@ const docTemplate = `{
                             ]
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -470,14 +476,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -517,14 +523,14 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "401": {
-                        "description": "Unauthorized",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "404": {
-                        "description": "Not Found",
+                    "500": {
+                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -549,7 +555,7 @@ const docTemplate = `{
                 "tags": [
                     "users"
                 ],
-                "summary": "List all users",
+                "summary": "List users",
                 "parameters": [
                     {
                         "type": "integer",
@@ -594,12 +600,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -677,7 +677,7 @@ const docTemplate = `{
                 "summary": "Update current user",
                 "parameters": [
                     {
-                        "description": "User update data",
+                        "description": "User update details",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -701,12 +701,6 @@ const docTemplate = `{
                     },
                     "401": {
                         "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -759,7 +753,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Get a user's profile by their ID",
+                "description": "Get details of a specific user",
                 "consumes": [
                     "application/json"
                 ],
@@ -809,12 +803,6 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
-                        }
                     }
                 }
             },
@@ -824,7 +812,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Update a specific user's profile by their ID",
+                "description": "Update an existing user",
                 "consumes": [
                     "application/json"
                 ],
@@ -844,7 +832,7 @@ const docTemplate = `{
                         "required": true
                     },
                     {
-                        "description": "User update data",
+                        "description": "Updated user details",
                         "name": "user",
                         "in": "body",
                         "required": true,
@@ -872,8 +860,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -886,7 +874,7 @@ const docTemplate = `{
                         "Bearer": []
                     }
                 ],
-                "description": "Delete a specific user by their ID",
+                "description": "Delete an existing user",
                 "consumes": [
                     "application/json"
                 ],
@@ -919,8 +907,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
-                    "500": {
-                        "description": "Internal Server Error",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
@@ -930,6 +918,11 @@ const docTemplate = `{
         },
         "/workouts": {
             "post": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Create a new workout plan",
                 "consumes": [
                     "application/json"
@@ -977,6 +970,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -988,6 +987,11 @@ const docTemplate = `{
         },
         "/workouts/{id}": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Get details of a specific workout",
                 "consumes": [
                     "application/json"
@@ -1032,10 +1036,21 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
+                        }
                     }
                 }
             },
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Update an existing workout plan",
                 "consumes": [
                     "application/json"
@@ -1078,6 +1093,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }
                     },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
+                        }
+                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -1087,6 +1108,11 @@ const docTemplate = `{
                 }
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete an existing workout plan",
                 "consumes": [
                     "application/json"
@@ -1110,6 +1136,12 @@ const docTemplate = `{
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/github_com_rowjay007_walkit_internal_model.Response"
                         }

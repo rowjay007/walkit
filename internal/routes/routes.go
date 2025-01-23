@@ -11,8 +11,8 @@ func LoadRoutes(router *gin.Engine) {
 	{
 		auth := api.Group("/auth")
 		{
-			auth.POST("/register", handler.RegisterUser)
-			auth.POST("/login", handler.LoginUser)
+			auth.POST("/register", handler.Register)
+			auth.POST("/login", handler.Login)
 			auth.POST("/forgot-password", handler.RequestPasswordReset)
 			auth.POST("/reset-password", handler.ConfirmPasswordReset)
 		}

@@ -7,7 +7,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
-
+    "strings"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rowjay007/walkit/config"
@@ -34,6 +34,7 @@ import (
 
 // @host      localhost:8080
 // @BasePath  /api/v1
+
 // @securityDefinitions.apikey Bearer
 // @in header
 // @name Authorization
@@ -49,12 +50,20 @@ func main() {
     }
 
     router := gin.New()
-
     router.Use(gin.Recovery())
     router.Use(logger.GinLogger())
 
-    limiter := middleware.NewRateLimiter(rate.Every(1*time.Second), 10) 
-    router.Use(middleware.RateLimiter(limiter))
+    // Increase rate limit for development
+    limiter := middleware.NewRateLimiter(rate.Every(1*time.Second), 30) // Increased from 10 to 30
+    
+    // Skip rate limiting for swagger routes
+    router.Use(func(c *gin.Context) {
+        if strings.HasPrefix(c.Request.URL.Path, "/swagger/") {
+            c.Next()
+            return
+        }
+        middleware.RateLimiter(limiter)(c)
+    })
 
     corsConfig := cors.DefaultConfig()
     corsConfig.AllowOrigins = cfg.CORSAllowedOrigins
