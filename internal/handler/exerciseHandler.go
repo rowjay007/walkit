@@ -1,12 +1,10 @@
 package handler
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	"github.com/rowjay007/walkit/internal/model"
 	"github.com/rowjay007/walkit/internal/service"
-	"github.com/rowjay007/walkit/pkg/util"
+	"net/http"
 )
 
 // CreateExercise handler for creating a new exercise.
@@ -26,16 +24,16 @@ import (
 func CreateExercise(c *gin.Context) {
 	var exercise model.Exercise
 	if err := c.ShouldBindJSON(&exercise); err != nil {
-		util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
+		c.JSON(http.StatusBadRequest, model.Response{Error: "Invalid request payload"})
 		return
 	}
 
 	if err := service.CreateExercise(exercise); err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, model.Response{Error: err.Error()})
 		return
 	}
 
-	util.RespondWithJSON(c, http.StatusCreated, gin.H{"message": "Exercise created successfully"})
+	c.JSON(http.StatusCreated, model.Response{Message: "Exercise created successfully"})
 }
 
 // GetExercise godoc
@@ -54,10 +52,14 @@ func GetExercise(c *gin.Context) {
 	id := c.Param("id")
 	exercise, err := service.GetExercise(id)
 	if err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+		if err.Error() == "exercise not found" {
+			c.JSON(http.StatusNotFound, model.Response{Error: err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, model.Response{Error: err.Error()})
 		return
 	}
-	util.RespondWithJSON(c, http.StatusOK, exercise)
+	c.JSON(http.StatusOK, model.Response{Data: exercise})
 }
 
 // ListExercises godoc
@@ -77,17 +79,20 @@ func GetExercise(c *gin.Context) {
 func ListExercises(c *gin.Context) {
 	var filter model.ExerciseFilter
 	if err := c.ShouldBindQuery(&filter); err != nil {
-		util.RespondWithError(c, http.StatusBadRequest, "Invalid query parameters")
+		c.JSON(http.StatusBadRequest, model.Response{Error: "Invalid query parameters"})
 		return
 	}
 
 	response, err := service.ListExercises(filter)
 	if err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+		c.JSON(http.StatusInternalServerError, model.Response{Error: err.Error()})
 		return
 	}
 
-	util.RespondWithJSON(c, http.StatusOK, response)
+	c.JSON(http.StatusOK, model.Response{
+		Data:    response,
+		Message: "Exercises retrieved successfully",
+	})
 }
 
 // UpdateExercise godoc
@@ -108,16 +113,20 @@ func UpdateExercise(c *gin.Context) {
 	id := c.Param("id")
 	var exercise model.Exercise
 	if err := c.ShouldBindJSON(&exercise); err != nil {
-		util.RespondWithError(c, http.StatusBadRequest, "Invalid request payload")
+		c.JSON(http.StatusBadRequest, model.Response{Error: "Invalid request payload"})
 		return
 	}
 
 	if err := service.UpdateExercise(id, exercise); err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+		if err.Error() == "exercise not found" {
+			c.JSON(http.StatusNotFound, model.Response{Error: err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, model.Response{Error: err.Error()})
 		return
 	}
 
-	util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Exercise updated successfully"})
+	c.JSON(http.StatusOK, model.Response{Message: "Exercise updated successfully"})
 }
 
 // DeleteExercise godoc
@@ -135,8 +144,12 @@ func UpdateExercise(c *gin.Context) {
 func DeleteExercise(c *gin.Context) {
 	id := c.Param("id")
 	if err := service.DeleteExercise(id); err != nil {
-		util.RespondWithError(c, http.StatusInternalServerError, err.Error())
+		if err.Error() == "exercise not found" {
+			c.JSON(http.StatusNotFound, model.Response{Error: err.Error()})
+			return
+		}
+		c.JSON(http.StatusInternalServerError, model.Response{Error: err.Error()})
 		return
 	}
-	util.RespondWithJSON(c, http.StatusOK, gin.H{"message": "Exercise deleted successfully"})
+	c.JSON(http.StatusOK, model.Response{Message: "Exercise deleted successfully"})
 }
