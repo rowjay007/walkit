@@ -18,12 +18,24 @@ run:
 dev:
 	air -c air.toml
 
+.PHONY: run build test docs clean
+
+run: docs
+	air
+
+build:
+	go build -o bin/server cmd/server/main.go
+
 test:
 	go test -v ./...
 
+docs:
+	swag init -g ./cmd/server/main.go -d . -o docs --parseInternal --parseDependency
+
 clean:
-	go clean
 	rm -rf bin/
+	rm -rf tmp/
+	rm -rf docs/
 
 docker-build:
 	docker build -t $(DOCKER_IMAGE) .
