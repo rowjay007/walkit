@@ -1,3 +1,10 @@
+# [0.15.0](https://github.com/rowjay007/walkit/compare/v0.14.0...v0.15.0) (2025-01-23)
+
+
+### Features
+
+* update the Dockerfile to use Go 1.22 ([7407343](https://github.com/rowjay007/walkit/commit/7407343e9f9f79108a33ed714c6772d4124dfc92))
+
 # [0.14.0](https://github.com/rowjay007/walkit/compare/v0.13.0...v0.14.0) (2025-01-23)
 
 
