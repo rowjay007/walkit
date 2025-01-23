@@ -1,3 +1,10 @@
+# [0.13.0](https://github.com/rowjay007/walkit/compare/v0.12.1...v0.13.0) (2025-01-23)
+
+
+### Features
+
+* update swagger running docs ([b7faab4](https://github.com/rowjay007/walkit/commit/b7faab43174fd79978294de0af732ce96afecced))
+
 ## [0.12.1](https://github.com/rowjay007/walkit/compare/v0.12.0...v0.12.1) (2025-01-23)
 
 
