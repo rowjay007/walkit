@@ -1,7 +1,18 @@
 basePath: /api/v1
 definitions:
-  gin.H:
-    additionalProperties: {}
+  github_com_rowjay007_walkit_internal_model.ConfirmPasswordResetRequest:
+    properties:
+      password:
+        minLength: 8
+        type: string
+      passwordConfirm:
+        type: string
+      token:
+        type: string
+    required:
+    - password
+    - passwordConfirm
+    - token
     type: object
   github_com_rowjay007_walkit_internal_model.Exercise:
     properties:
@@ -61,6 +72,13 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.User'
+    type: object
+  github_com_rowjay007_walkit_internal_model.PasswordResetRequest:
+    properties:
+      email:
+        type: string
+    required:
+    - email
     type: object
   github_com_rowjay007_walkit_internal_model.Response:
     properties:
@@ -162,7 +180,7 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate a user and return a token
+      description: Authenticate user and return JWT token
       parameters:
       - description: Login credentials
         in: body
@@ -176,23 +194,88 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.LoginResponse'
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.LoginResponse'
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "401":
           description: Unauthorized
           schema:
-            $ref: '#/definitions/gin.H'
-      summary: Login user
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      summary: User login
+      tags:
+      - auth
+  /auth/password-reset:
+    post:
+      consumes:
+      - application/json
+      description: Send a password reset email to the user
+      parameters:
+      - description: Password reset request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.PasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      summary: Request password reset
+      tags:
+      - auth
+  /auth/password-reset/confirm:
+    post:
+      consumes:
+      - application/json
+      description: Reset user's password using the reset token
+      parameters:
+      - description: Password reset confirmation
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.ConfirmPasswordResetRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      summary: Confirm password reset
       tags:
       - auth
   /auth/register:
     post:
       consumes:
       - application/json
-      description: Register a new user in the system
+      description: Create a new user account
       parameters:
       - description: User registration details
         in: body
@@ -206,23 +289,67 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
       summary: Register new user
       tags:
       - auth
   /exercises:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of exercises with optional filtering
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      - description: Exercise type
+        in: query
+        name: type
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Exercise'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: List exercises
+      tags:
+      - exercises
     post:
       consumes:
       - application/json
-      description: Create a new exercise with the provided details
+      description: Create a new exercise in the system
       parameters:
       - description: Exercise details
         in: body
@@ -236,19 +363,60 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/gin.H'
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Exercise'
+              type: object
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
       summary: Create new exercise
       tags:
       - exercises
   /exercises/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an existing exercise
+      parameters:
+      - description: Exercise ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: Delete exercise
+      tags:
+      - exercises
     get:
       consumes:
       - application/json
@@ -265,43 +433,193 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Exercise'
-        "500":
-          description: Internal Server Error
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Exercise'
+              type: object
+        "401":
+          description: Unauthorized
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
       summary: Get exercise by ID
       tags:
       - exercises
-  /users/me:
-    get:
+    put:
       consumes:
       - application/json
-      description: Get details of the currently authenticated user
+      description: Update an existing exercise
+      parameters:
+      - description: Exercise ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Updated exercise details
+        in: body
+        name: exercise
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Exercise'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.User'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: Update exercise
+      tags:
+      - exercises
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: Get a list of users with optional filtering
+      parameters:
+      - description: Page number
+        in: query
+        name: page
+        type: integer
+      - description: Items per page
+        in: query
+        name: limit
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.User'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
       security:
-      - ApiKeyAuth: []
-      summary: Get current user
+      - Bearer: []
+      summary: List all users
+      tags:
+      - users
+  /users/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Delete a specific user by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: Delete user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get a user's profile by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.User'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: Get user by ID
       tags:
       - users
     put:
       consumes:
       - application/json
-      description: Update the currently authenticated user's details
+      description: Update a specific user's profile by their ID
       parameters:
-      - description: User update details
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: User update data
         in: body
-        name: update
+        name: user
         required: true
         schema:
           $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.UpdateUserRequest'
@@ -311,17 +629,110 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
         "500":
           description: Internal Server Error
           schema:
-            $ref: '#/definitions/gin.H'
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
       security:
-      - ApiKeyAuth: []
+      - Bearer: []
+      summary: Update user
+      tags:
+      - users
+  /users/me:
+    delete:
+      consumes:
+      - application/json
+      description: Delete the currently authenticated user's account
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: Delete current user
+      tags:
+      - users
+    get:
+      consumes:
+      - application/json
+      description: Get the profile of the currently authenticated user
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.User'
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
+      summary: Get current user
+      tags:
+      - users
+    put:
+      consumes:
+      - application/json
+      description: Update the profile of the currently authenticated user
+      parameters:
+      - description: User update data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.UpdateUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+      security:
+      - Bearer: []
       summary: Update current user
       tags:
       - users
@@ -343,7 +754,12 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.WorkoutPlan'
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.WorkoutPlan'
+              type: object
         "400":
           description: Bad Request
           schema:
@@ -396,7 +812,12 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.WorkoutPlan'
+            allOf:
+            - $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/github_com_rowjay007_walkit_internal_model.WorkoutPlan'
+              type: object
         "404":
           description: Not Found
           schema:
@@ -438,4 +859,10 @@ paths:
       summary: Update workout
       tags:
       - workouts
+securityDefinitions:
+  Bearer:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
