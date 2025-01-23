@@ -1,3 +1,10 @@
+# [0.12.0](https://github.com/rowjay007/walkit/compare/v0.11.0...v0.12.0) (2025-01-23)
+
+
+### Features
+
+* add swagger doc ui ([475e84d](https://github.com/rowjay007/walkit/commit/475e84d8fdbcde84937eaa57662b97eccbd4c82c))
+
 # [0.11.0](https://github.com/rowjay007/walkit/compare/v0.10.0...v0.11.0) (2025-01-22)
 
 
