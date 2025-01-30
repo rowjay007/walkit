@@ -1,6 +1,3 @@
-Here is your content formatted as Markdown:
-
-```markdown
 # Walkit
 
 A fitness workout tracking API built with Go, Gin framework, and PocketBase. This project is based on the [Fitness Workout Tracker](https://roadmap.sh/projects/fitness-workout-tracker) project from roadmap.sh.
@@ -156,4 +153,3 @@ The following collections are used in the project:
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-```
